@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:recyceling_app/services/db_helper.dart';
+import 'package:recyceling_app/views/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+import 'models/bin_model.dart';
+import 'models/category_item.dart';
+import 'models/instruction_model.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper().database;
+  await addInitialCategoriesOnce();
   runApp(const MyApp());
 }
 
@@ -12,114 +23,200 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: HomePage(),
     );
   }
 }
+Future<void> addInitialCategoriesOnce() async {
+  final prefs = await SharedPreferences.getInstance();
+  final isInserted = prefs.getBool('isCategoryInserted') ?? false;
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  if (!isInserted) {
+    final db = DBHelper();
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/plastic.png',
+      title: 'Plastic bottles and containers coded #1-#7 Six or twelve pack rings',
+      description: 'Plastic bags and film electronic items insecticide and hazardous chemical containers',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle1.png',
+      title: 'POLYETHYLENE TEREPHTHALATE COMMON ITEMS: ',
+      description: 'Cosmetic Containers Plastic Bottles Mouthwash Bottles Prepared Food Trays',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle2.png',
+      title: 'HIGH-DENSITY POLYETHYLENE COMMON ITEMS:  ',
+      description: 'Detergent Bottles Grocery Bags Milk Bottles Shampoo Bottles',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle3.png',
+      title: 'POLYVINYL CHLORIDE COMMON ITEMS:  ',
+      description: 'Garden Hose Window Frames Blood Bags Blister Packs',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle4.png',
+      title: 'LOW-DENSITY POLYETHYLENE COMMON ITEMS: ',
+      description: '6 Packs Rings Cling Film Bread Bags Squeezble Bottles',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle5.png',
+      title: 'POLYETHYLENE COMMON ITEMS: ',
+      description: 'Yogurt Containers Medicine Bottles Caps Straws',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle6.png',
+      title: 'POLYSTYRENE COMMON ITEMS:  ',
+      description: 'Disposable PLates/Cups Egg Cartons Meat Trays Take-out Containers',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 1,
+      imagePath: 'assets/images/recycle7.png',
+      title: 'OTHER PLASTICS COMMON ITEMS: :  ',
+      description: 'Sunglasses Nylon Bulletproof Materials 3 & 5 gallon water bottles',
+    ));
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+    await db.insertCategory(CategoryItem(
+      groupId: 2,
+      imagePath: 'assets/images/metal.png',
+      title: 'Aluminum cans and foil Tin and steel cans including empty aerosol cans ',
+      description: 'Needles or syringes',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 2,
+      imagePath: 'assets/images/recycle8.png',
+      title: 'STEEL COMMON ITEMS:  ',
+      description: 'FOOD CANS',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 2,
+      imagePath: 'assets/images/recycle9.png',
+      title: 'ALUMINIUM COMMON ITEMS:  ',
+      description: 'SOFt drink cans deodorant cans disposable food containers aluminium foil heat sinks',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 3,
+      imagePath: 'assets/images/cardboard.png',
+      title: 'CClean corrugated cardboard',
+      description: 'Pizza Boxes Boxes with plastic film, wax, or other embellishments',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 3,
+      imagePath: 'assets/images/recycle22.png',
+      title: 'CORRUGATED FIBERBOARD COMMON ITEMS: ',
+      description: 'food storage jars',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 4,
+      imagePath: 'assets/images/battery.png',
+      title: 'Battery',
+      description: 'Boxes',
+    ));
 
-  final String title;
+    await db.insertCategory(CategoryItem(
+      groupId: 4,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'Mixed Paper: advertisements, direct mail, office paper, stationary, emvelopes, paper bags, gift wrap Magazines, newspaper, catalogs, and telephone books',
+      description: 'Disposable diapers or rags soiled items such as pizza boxes, napkins, and tissues',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 5,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'Mixed Paper: advertisements, direct mail, office paper, stationary, emvelopes, paper bags, gift wrap Magazines, newspaper, catalogs, and telephone books',
+      description: 'Disposable diapers or rags soiled items such as pizza boxes, napkins, and tissues',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 6,
+      imagePath: 'assets/images/glass.png',
+      title: 'Paper',
+      description: 'Paper waste description',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 7,
+      imagePath: 'assets/images/electric.png',
+      title: 'Paper',
+      description: 'Paper waste description',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/organic.png',
+      title: 'Paper',
+      description: 'Paper waste description',
+    ));
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    await DBHelper().insertBin(Bin(
+      name: 'Recycling Center for ',
+      description: 'Location: 123 xxx Street, State College, PA',
+      latitude: 41.555314,
+      longitude: 60.620246,
+      imagePath: 'assets/images/bin.png',
+      category: 'Cardboard Mixed Paper Plastic',
+      instructions: [
+        Instruction(binId: 0, name: 'For cardboard', imagePath: 'assets/images/in1.png'),
+        Instruction(binId: 0, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+      ],
+    ));
+    await DBHelper().insertBin(Bin(
+      name: 'Recycling Center for ',
+      description: 'Accepts paper and plastic.',
+      latitude: 41.553018,
+      longitude: 60.619688,
+      imagePath: 'assets/images/bin.png',
+      category: 'Mixed',
+      instructions: [
+        Instruction(binId: 1, name: 'For cardboard', imagePath: 'assets/images/in1.png'),
+        Instruction(binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+      ],
+    ));
+    await DBHelper().insertBin(Bin(
+      name: 'Recycling Center for ',
+      description: 'Accepts paper and plastic.',
+      latitude: 41.554118,
+      longitude:  60.618594,
+      imagePath: 'assets/images/bin.png',
+      category: 'Mixed',
+      instructions: [
+        Instruction(binId: 1, name: 'For cardboard', imagePath: 'assets/images/in1.png'),
+        Instruction(binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+      ],
+    ));
+    await DBHelper().insertBin(Bin(
+      name: 'Recycling Center for ',
+      description: 'Accepts paper and plastic.',
+      latitude: 41.553331,
+      longitude: 60.619345,
+      imagePath: 'assets/images/bin.png',
+      category: 'Mixed',
+      instructions: [
+        Instruction(binId: 1, name: 'For cardboard', imagePath: 'assets/images/in1.png'),
+        Instruction(binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+      ],
+    ));
+    await DBHelper().insertBin(Bin(
+      name: 'Recycling Center for ',
+      description: 'Accepts paper and plastic.',
+      latitude: 41.554833,
+      longitude: 60.620053,
+      imagePath: 'assets/images/bin.png',
+      category: 'Mixed',
+      instructions: [
+        Instruction(binId: 1, name: 'For cardboard', imagePath: 'assets/images/in1.png'),
+        Instruction(binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+      ],
+    ));
+    await prefs.setBool('isCategoryInserted', true);
   }
 }
