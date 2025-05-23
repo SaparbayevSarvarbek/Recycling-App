@@ -19,14 +19,14 @@ class _ItemSearchPageState extends State<ItemSearchPage> {
   TextEditingController _searchController = TextEditingController();
   List<CategoryModel> filteredCategories = [];
   final List<CategoryModel> categories = [
-    CategoryModel(1,"PLASTIC", "assets/images/plastic.png"),
-    CategoryModel(2,"METAL", "assets/images/metal.png"),
-    CategoryModel(3,"CARDBOARD", "assets/images/cardboard.png"),
-    CategoryModel(4,"BATTERY", "assets/images/battery.png"),
-    CategoryModel(5,"PAPER", "assets/images/paper.png"),
-    CategoryModel(6,"GLASS", "assets/images/glass.png"),
-    CategoryModel(7,"Electric", "assets/images/electric.png"),
-    CategoryModel(8,"ORGANIC", "assets/images/organic.png"),
+    CategoryModel(1, "PLASTIC", "assets/images/plastic.png"),
+    CategoryModel(2, "METAL", "assets/images/metal.png"),
+    CategoryModel(3, "CARDBOARD", "assets/images/cardboard.png"),
+    CategoryModel(4, "BATTERY", "assets/images/battery.png"),
+    CategoryModel(5, "PAPER", "assets/images/paper.png"),
+    CategoryModel(6, "GLASS", "assets/images/glass.png"),
+    CategoryModel(7, "Electric", "assets/images/electric.png"),
+    CategoryModel(8, "ORGANIC", "assets/images/organic.png"),
   ];
 
   void _filterSearch() {
@@ -59,7 +59,7 @@ class _ItemSearchPageState extends State<ItemSearchPage> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 24,
           ),
         ),
         centerTitle: true,
@@ -78,10 +78,10 @@ class _ItemSearchPageState extends State<ItemSearchPage> {
                 margin: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Search By Item:',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    color: Colors.black,
-                  ),
+                  style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 16),
@@ -151,8 +151,9 @@ class _ItemSearchPageState extends State<ItemSearchPage> {
                     child: const Text(
                       "Search By Category:",
                       style: TextStyle(
-                        fontSize: 16,
-                      ),
+                          fontSize: 24,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 12),

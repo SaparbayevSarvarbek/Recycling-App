@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:recyceling_app/views/scan_info_page.dart';
 
 class QrScannerPage extends StatefulWidget {
   const QrScannerPage({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
               ),
               Text(
                 'SCAN YOUR ITEM',
-                style: TextStyle(fontSize: 24, color: Color(0xFF70B458)),
+                style: TextStyle(fontSize: 24, color: Color(0xFF1A441D)),
               ),
               SizedBox(
                 height: 500,
@@ -68,23 +69,42 @@ class _QrScannerPageState extends State<QrScannerPage> {
               ElevatedButton(
                 onPressed: () {
                   if (scannedData != null) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Scanned Data"),
-                        content: Text(scannedData!),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Close"),
-                          ),
-                        ],
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            ScanInfoPage(scannedData: scannedData!),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(0.0, 1.0);
+                          const end = Offset.zero;
+                          const curve = Curves.ease;
+
+                          final tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          final offsetAnimation = animation.drive(tween);
+
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: const Duration(
+                            milliseconds: 400),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Ma'lumot topilmadi"),
+                        duration: Duration(seconds: 3),
+                        backgroundColor: Colors.green,
                       ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: const Color(0xFF70B458),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -95,7 +115,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                   "SCAN",
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
-              ),
+              )
             ],
           ),
         ),

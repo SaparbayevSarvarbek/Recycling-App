@@ -38,9 +38,9 @@ class _FaqPageState extends State<FaqPage> {
             const Text(
               'FAQs:',
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'SeoulNamsan'),
             ),
             const SizedBox(height: 8),
             Card(
@@ -67,9 +67,9 @@ class _FaqPageState extends State<FaqPage> {
             Text(
               'QUICK TIPS & TRICKS:',
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'SeoulNamsan'),
             ),
             const SizedBox(height: 18),
             Card(
@@ -87,7 +87,10 @@ class _FaqPageState extends State<FaqPage> {
                     SizedBox(height: 4),
                     Text(
                       '*RECYCLING ITEMS AND CONTAINERS THAT STILL HAVE FOOD ON THEM CAN CONTAMINATE AN ENTIRE TRUCKLOAD OF RECYCLING PRODUCTS! MAKE SURE ALL PRODUCTS ARE EMPTY, CLEAN, AND DRY BEFORE RECYCLING!',
-                      style: TextStyle(fontSize: 14, color: Color(0xFF1A441D)),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF1A441D),
+                          fontFamily: 'SeoulNamsan'),
                     ),
                   ],
                 ),
@@ -113,11 +116,16 @@ class BulletText extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('• ',
-              style: TextStyle(fontSize: 15, color: Color(0xFF1A441D))),
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xFF1A441D),
+                  fontFamily: 'SeoulNamsan')),
           Expanded(
               child: Text(text,
-                  style:
-                      const TextStyle(fontSize: 15, color: Color(0xFF1A441D)))),
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF1A441D),
+                      fontFamily: 'SeoulNamsan'))),
         ],
       ),
     );

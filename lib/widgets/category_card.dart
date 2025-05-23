@@ -10,17 +10,17 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PlasticPage(
-                categoryId: category.id,
-                categoryTitle: category.name,
-              ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlasticPage(
+              categoryId: category.id,
+              categoryTitle: category.name,
             ),
-          );
-        },
+          ),
+        );
+      },
       child: Container(
         width: 138.26,
         height: 177.34,
@@ -34,7 +34,9 @@ class CategoryCard extends StatelessWidget {
             Text(
               category.name,
               style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
             ),
             const SizedBox(height: 8),
             Image.asset(category.imagePath, width: 97.39, height: 97.39),
