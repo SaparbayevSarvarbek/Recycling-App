@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:recyceling_app/widgets/location_detalis_widget.dart';
+
 import '../models/bin_model.dart';
 import '../services/db_helper.dart';
 
@@ -15,6 +19,7 @@ class _LocationPageState extends State<LocationPage> {
   List<Bin> _bins = [];
   LocationData? _currentLocation;
   TextEditingController _searchController = TextEditingController();
+  int? selectedBinId;
 
   @override
   void initState() {
@@ -33,7 +38,7 @@ class _LocationPageState extends State<LocationPage> {
   Future<void> _initialize() async {
     await _getCurrentLocation();
     await _loadBins();
-    _updateMarkers();
+    await _updateMarkers();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -53,18 +58,6 @@ class _LocationPageState extends State<LocationPage> {
 
     final loc = await location.getLocation();
     setState(() => _currentLocation = loc);
-
-    location.onLocationChanged.listen((loc) {
-      setState(() => _currentLocation = loc);
-      _updateMarkers();
-      if (_mapController != null) {
-        _mapController!.animateCamera(
-          CameraUpdate.newLatLng(
-            LatLng(loc.latitude!, loc.longitude!),
-          ),
-        );
-      }
-    });
   }
 
   Future<void> _loadBins() async {
@@ -72,20 +65,41 @@ class _LocationPageState extends State<LocationPage> {
     setState(() => _bins = bins);
   }
 
-  void _updateMarkers() {
-    final userIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
-    final binIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+  Future<BitmapDescriptor> _bitmapFromAsset(String path,
+      {int width = 400}) async {
+    return await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(width.toDouble(), width.toDouble())),
+      path,
+    );
+  }
 
-    Set<Marker> newMarkers = _bins.map((bin) {
-      return Marker(
-        markerId: MarkerId(bin.id.toString()),
-        position: LatLng(bin.latitude, bin.longitude),
-        icon: binIcon,
-        onTap: () => _showBinDetails(bin),
+  Future<void> _updateMarkers() async {
+    final userIcon =
+        await _bitmapFromAsset('assets/images/user_location.png', width: 400);
+
+    Set<Marker> newMarkers = {};
+
+    for (var bin in _bins) {
+      final binIcon = await _bitmapFromAsset(
+        bin.id == selectedBinId
+            ? 'assets/images/binmarker_selected.png'
+            : 'assets/images/binmarker.png',
+        width: 400,
       );
-    }).toSet();
+
+      newMarkers.add(
+        Marker(
+          markerId: MarkerId(bin.id.toString()),
+          position: LatLng(bin.latitude, bin.longitude),
+          icon: binIcon,
+          onTap: () {
+            setState(() => selectedBinId = bin.id);
+            _showBinDetails(bin);
+            _updateMarkers();
+          },
+        ),
+      );
+    }
 
     if (_currentLocation != null) {
       newMarkers.add(
@@ -106,107 +120,199 @@ class _LocationPageState extends State<LocationPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) => DraggableScrollableSheet(
-        expand: false,
-        builder: (_, controller) => Padding(
-          padding: EdgeInsets.all(16),
-          child: ListView(
-            controller: controller,
-            children: [
-              Text(bin.name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Image.asset(bin.imagePath, height: 150),
-              SizedBox(height: 8),
-              Text(bin.description),
-              SizedBox(height: 16),
-              Text('Yo‘riqnomalar:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ...bin.instructions.map((instr) => ListTile(
-                    leading:
-                        Image.asset(instr.imagePath, width: 40, height: 40),
-                    title: Text(instr.name),
-                  )),
-            ],
-          ),
-        ),
-      ),
+      builder: (_) => LocationDetailsWidget(bin: bin),
     );
   }
 
-  void _onSearchChanged() {
+  void _onSearchChanged() async {
     String query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) {
+      await _updateMarkers();
+      return;
+    }
 
     final filteredBins =
         _bins.where((bin) => bin.name.toLowerCase().contains(query)).toList();
 
-    final binIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
-    final userIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+    if (filteredBins.isNotEmpty) {
+      final firstMatchedBin = filteredBins.first;
 
-    Set<Marker> searchMarkers = filteredBins.map((bin) {
-      return Marker(
-        markerId: MarkerId(bin.id.toString()),
-        position: LatLng(bin.latitude, bin.longitude),
-        icon: binIcon,
-        onTap: () => _showBinDetails(bin),
-      );
-    }).toSet();
+      setState(() {
+        selectedBinId = firstMatchedBin.id;
+      });
 
-    if (_currentLocation != null) {
-      searchMarkers.add(
-        Marker(
-          markerId: MarkerId('user_location'),
-          position:
-              LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
-          icon: userIcon,
-          infoWindow: InfoWindow(title: 'Sizning joylashuvingiz'),
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(firstMatchedBin.latitude, firstMatchedBin.longitude),
+          16,
         ),
       );
+
+      await _updateMarkers();
+    }
+  }
+
+  void _showNearestBin() {
+    if (_currentLocation == null || _bins.isEmpty) return;
+
+    Bin? nearest;
+    double shortestDistance = double.infinity;
+
+    for (var bin in _bins) {
+      final distance = _calculateDistance(
+        _currentLocation!.latitude!,
+        _currentLocation!.longitude!,
+        bin.latitude,
+        bin.longitude,
+      );
+      if (distance < shortestDistance) {
+        shortestDistance = distance;
+        nearest = bin;
+      }
     }
 
-    setState(() => _markers = searchMarkers);
+    if (nearest != null) {
+      setState(() => selectedBinId = nearest!.id);
+      _mapController?.animateCamera(CameraUpdate.newLatLng(
+        LatLng(nearest.latitude, nearest.longitude),
+      ));
+      _showBinDetails(nearest);
+      _updateMarkers();
+    }
   }
+
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const R = 6371;
+    final dLat = _deg2rad(lat2 - lat1);
+    final dLon = _deg2rad(lon2 - lon1);
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_deg2rad(lat1)) *
+            cos(_deg2rad(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return R * c;
+  }
+
+  double _deg2rad(double deg) => deg * (pi / 180);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chiqindi Qutilari'),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(56),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Qidirish...',
-                prefixIcon: Icon(Icons.search),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-            ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(45),
           ),
         ),
+        title: Text(
+          'BIN LOCATOR',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                    _currentLocation!.latitude!, _currentLocation!.longitude!),
-                zoom: 14,
-              ),
-              markers: _markers,
-              onMapCreated: (controller) {
-                _mapController = controller;
-                _updateMarkers();
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
+          : Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      _currentLocation!.latitude!,
+                      _currentLocation!.longitude!,
+                    ),
+                    zoom: 14,
+                  ),
+                  markers: _markers,
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                    _updateMarkers();
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                ),
+                Positioned(
+                  top: 40,
+                  left: 16,
+                  right: 16,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'EX) STATE COLLEGE, PA',
+                            hintStyle: TextStyle(color: Color(0xFFB5BDC2)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Color(0xFF70B458),
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Colors.green,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (value.isEmpty) {
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 16.0),
+                      GestureDetector(
+                        onTap: _onSearchChanged,
+                        child: Container(
+                          width: 49,
+                          height: 49,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF70B458),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 24,
+                  left: 50,
+                  right: 50,
+                  child: ElevatedButton(
+                    onPressed: _showNearestBin,
+                    style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        textStyle: TextStyle(fontSize: 16),
+                        backgroundColor: Color(0xFF70B458)),
+                    child: Text(
+                      'LOCATE NEAREST',
+                      style: TextStyle(color: Colors.white, fontSize: 26),
+                    ),
+                  ),
+                ),
+              ],
             ),
     );
   }

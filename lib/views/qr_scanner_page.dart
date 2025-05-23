@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:recyceling_app/views/scan_info_page.dart';
 
+import '../viewmodels/corner_pointer.dart';
+
 class QrScannerPage extends StatefulWidget {
   const QrScannerPage({Key? key}) : super(key: key);
 
@@ -19,15 +21,14 @@ class _QrScannerPageState extends State<QrScannerPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                height: 50,
-              ),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'SCAN YOUR ITEM',
                 style: TextStyle(fontSize: 24, color: Color(0xFF1A441D)),
               ),
+              const SizedBox(height: 10),
               SizedBox(
-                height: 500,
+                height: 539,
                 width: 356,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -52,12 +53,9 @@ class _QrScannerPageState extends State<QrScannerPage> {
                         ),
                         Align(
                           alignment: Alignment.center,
-                          child: Container(
-                            width: 180,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 2),
-                            ),
+                          child: CustomPaint(
+                            size: const Size(200, 200),
+                            painter: CornerPainter(),
                           ),
                         ),
                       ],
@@ -79,7 +77,6 @@ class _QrScannerPageState extends State<QrScannerPage> {
                           const begin = Offset(0.0, 1.0);
                           const end = Offset.zero;
                           const curve = Curves.ease;
-
                           final tween = Tween(begin: begin, end: end)
                               .chain(CurveTween(curve: curve));
                           final offsetAnimation = animation.drive(tween);
@@ -89,8 +86,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                             child: child,
                           );
                         },
-                        transitionDuration: const Duration(
-                            milliseconds: 400),
+                        transitionDuration: const Duration(milliseconds: 400),
                       ),
                     );
                   } else {
@@ -98,7 +94,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                       const SnackBar(
                         content: Text("Ma'lumot topilmadi"),
                         duration: Duration(seconds: 3),
-                        backgroundColor: Colors.green,
+                        backgroundColor: Color(0xFF70B458),
                       ),
                     );
                   }

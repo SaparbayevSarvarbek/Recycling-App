@@ -43,7 +43,7 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
 
     setState(() {
       filteredList = data;
-      item = filteredList.isNotEmpty ? filteredList[0] : null;
+      item = filteredList.isNotEmpty ? filteredList[2] : null;
       isLoading = false;
     });
   }
@@ -51,7 +51,6 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      // Yuklanayotgan holat
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -72,21 +71,35 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFA3D9A5),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.white54,
-                  borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 20),
+              Text(
+                'THIS IS A PLASTIC BOTTLE',
+                style: TextStyle(
+                  fontSize: 33,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
+              Text(
+                'Recycling Symbol:',
+                style: TextStyle(fontSize: 26, color: Colors.white),
+              ),
+              SizedBox(
+                width: 200,
+                height: 165,
+                child: Image.asset(item!.imagePath),
+              ),
+              Text(
+                'Category:',
+                style: TextStyle(fontSize: 26, color: Colors.white),
+              ),
               Text(
                 item!.title.toUpperCase(),
                 textAlign: TextAlign.center,
@@ -104,10 +117,19 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
                   ],
                 ),
               ),
+              Text(
+                'Click to learn more',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.white,
+                ),
+              ),
               const SizedBox(height: 30),
               const Text(
-                "Description:",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                "Recycle Steps:",
+                style: TextStyle(fontSize: 26, color: Colors.white),
               ),
               const SizedBox(height: 10),
               Text(
@@ -115,26 +137,8 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
                 style: const TextStyle(fontSize: 16, color: Colors.black87),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "Category:",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                item!.groupId == 1
-                    ? "PLASTIC"
-                    : item!.groupId == 2
-                    ? "METAL"
-                    : item!.groupId == 3
-                    ? "PAPER"
-                    : "UNKNOWN",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const Spacer(),
+              Image.asset('assets/images/info_scan_img.png'),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
@@ -143,7 +147,7 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   elevation: 5,
                 ),
                 child: const Text(
@@ -151,6 +155,7 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -158,4 +163,3 @@ class _ScanInfoPageState extends State<ScanInfoPage> {
     );
   }
 }
-

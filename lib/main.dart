@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:recyceling_app/services/db_helper.dart';
 import 'package:recyceling_app/views/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -135,40 +134,110 @@ Future<void> addInitialCategoriesOnce() async {
       groupId: 4,
       imagePath: 'assets/images/recycle10.png',
       title:
-          'Mixed Paper: advertisements, direct mail, office paper, stationary, emvelopes, paper bags, gift wrap Magazines, newspaper, catalogs, and telephone books',
+          'Mixed Paper: advertisements, direct mail, office paper, newspaper, catalogs, and telephone books',
       description:
           'Disposable diapers or rags soiled items such as pizza boxes, napkins, and tissues',
     ));
     await db.insertCategory(CategoryItem(
       groupId: 5,
+      imagePath: 'assets/images/paper.png',
+      title:
+          'Mixed Paper: advertisements, stationary, emvelopes, and telephone books',
+      description:
+          'Disposable diapers or rags soiled items such, napkins, and tissues',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 5,
       imagePath: 'assets/images/recycle10.png',
       title:
-          'Mixed Paper: advertisements, direct mail, office paper, stationary, emvelopes, paper bags, gift wrap Magazines, newspaper, catalogs, and telephone books',
+      'PAPERBOARD COMMON ITEMS: ',
       description:
-          'Disposable diapers or rags soiled items such as pizza boxes, napkins, and tissues',
+      'cereal boxes snack boxes',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 5,
+      imagePath: 'assets/images/recycle10.png',
+      title:
+      'PAPER COMMON ITEMS: ',
+      description:
+      'Newspaper books/magazines wrapping paper wallpaper paper bags paper straws',
     ));
     await db.insertCategory(CategoryItem(
       groupId: 6,
       imagePath: 'assets/images/glass.png',
-      title: 'Paper',
-      description: 'Paper waste description',
+      title: 'Clear, green and brown glass bottles and jars',
+      description: 'Window glass and mirror Compact fluorescent and other light bulbs Ceramics',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 6,
+      imagePath: 'assets/images/recycle10.png',
+      title:
+      'CLEAR GLASS ITEMS: ',
+      description:
+      'food storage jars',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 6,
+      imagePath: 'assets/images/recycle10.png',
+      title:
+      'GREEN GLASS ITEMS: ',
+      description:
+      'wine bottles',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 6,
+      imagePath: 'assets/images/recycle10.png',
+      title:
+      'BROWN GLASS ITEMS: ',
+      description:
+      'beer, light-sensitive products',
     ));
     await db.insertCategory(CategoryItem(
       groupId: 7,
       imagePath: 'assets/images/electric.png',
-      title: 'Paper',
-      description: 'Paper waste description',
+      title: 'Most electronic devices',
+      description: 'LCD televisions and monitors Old televisions pre 1991',
     ));
     await db.insertCategory(CategoryItem(
       groupId: 8,
       imagePath: 'assets/images/organic.png',
-      title: 'Paper',
-      description: 'Paper waste description',
+      title: 'Materials made out of wood, cork, cotton, and jute ',
+      description: 'Items that have other materials than what is listed above',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'WOOD COMMON ITEMS: ',
+      description: 'Furniture chopping boards brooms pencils spoons ',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'WOOD COMMON ITEMS: ',
+      description: 'Furniture chopping boards brooms pencils spoons ',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'CORK COMMON ITEMS: ',
+      description: 'Bottle stoppers placemats construction material',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'COTTON COMMON ITEMS: ',
+      description: 'towels t-shirts swabs pads',
+    ));
+    await db.insertCategory(CategoryItem(
+      groupId: 8,
+      imagePath: 'assets/images/recycle10.png',
+      title: 'JUTE COMMON ITEMS: ',
+      description: 'Clothing',
     ));
 
     await DBHelper().insertBin(Bin(
-      name: 'Recycling Center for ',
-      description: 'Location: 123 xxx Street, State College, PA',
+      name: 'Location: 123 xxx Street, State College, PA ',
+      description: 'Metal,Paper',
       latitude: 41.555314,
       longitude: 60.620246,
       imagePath: 'assets/images/bin.png',
@@ -183,8 +252,8 @@ Future<void> addInitialCategoriesOnce() async {
       ],
     ));
     await DBHelper().insertBin(Bin(
-      name: 'Recycling Center for ',
-      description: 'Accepts paper and plastic.',
+      name: 'Location: 123 xxx Street, State College, PA',
+      description: 'Plastic Glass',
       latitude: 41.553018,
       longitude: 60.619688,
       imagePath: 'assets/images/bin.png',
@@ -199,51 +268,51 @@ Future<void> addInitialCategoriesOnce() async {
       ],
     ));
     await DBHelper().insertBin(Bin(
-      name: 'Recycling Center for ',
-      description: 'Accepts paper and plastic.',
+      name: 'Location: 123 xxx Street, State College, PA',
+      description: 'Cardboard Glass',
       latitude: 41.554118,
       longitude: 60.618594,
       imagePath: 'assets/images/bin.png',
       category: 'Mixed',
       instructions: [
         Instruction(
-            binId: 1,
+            binId: 2,
             name: 'For cardboard',
             imagePath: 'assets/images/in1.png'),
         Instruction(
-            binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+            binId: 2, name: 'For plastic', imagePath: 'assets/images/in2.png'),
       ],
     ));
     await DBHelper().insertBin(Bin(
-      name: 'Recycling Center for ',
-      description: 'Accepts paper and plastic.',
+      name: 'Location: 123 xxx Street, State College, PA',
+      description: 'Paper Electric',
       latitude: 41.553331,
       longitude: 60.619345,
       imagePath: 'assets/images/bin.png',
       category: 'Mixed',
       instructions: [
         Instruction(
-            binId: 1,
+            binId: 3,
             name: 'For cardboard',
             imagePath: 'assets/images/in1.png'),
         Instruction(
-            binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+            binId: 3, name: 'For plastic', imagePath: 'assets/images/in2.png'),
       ],
     ));
     await DBHelper().insertBin(Bin(
-      name: 'Recycling Center for ',
-      description: 'Accepts paper and plastic.',
+      name: 'Location: 123 xxx Street, State College, PA',
+      description: 'Electronic Organic',
       latitude: 41.554833,
       longitude: 60.620053,
       imagePath: 'assets/images/bin.png',
       category: 'Mixed',
       instructions: [
         Instruction(
-            binId: 1,
+            binId: 4,
             name: 'For cardboard',
             imagePath: 'assets/images/in1.png'),
         Instruction(
-            binId: 1, name: 'For plastic', imagePath: 'assets/images/in2.png'),
+            binId: 4, name: 'For plastic', imagePath: 'assets/images/in2.png'),
       ],
     ));
     await prefs.setBool('isCategoryInserted', true);
